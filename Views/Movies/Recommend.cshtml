@@ -1,13 +1,89 @@
-﻿@model List<MovieHub.Models.Movie>
+﻿@model IEnumerable<MovieHub.Models.Movie>
 
-<h2>Recommended Movies</h2>
-
-@foreach (var movie in Model)
-{
-    <div>
-        <h3>@movie.Title</h3>
-        <p>@movie.Genre</p>
-    </div>
+@{
+    ViewData["Title"] = "Movies";
 }
 
-<a href="/Movies">Back</a>
+<div class="page-header">
+    <h1>All Movies</h1>
+
+    <a href="/Movies/Create" class="btn btn-success px-4">
+        + Add Movie
+    </a>
+</div>
+
+<div class="search-box mb-4">
+    <form action="/Movies" method="get">
+        <div class="row g-3">
+            <div class="col-md-5">
+                <label class="form-label">Search by title</label>
+                <input type="text" name="searchString" class="form-control" placeholder="Enter movie name..." />
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Genre</label>
+                <select name="genre" class="form-select">
+                    <option value="">All genres</option>
+                    @foreach (var genre in ViewBag.Genres)
+                    {
+                        <option value="@genre">@genre</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    Search
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="empty-box">
+        <h4>No movies found</h4>
+        <p class="text-muted mb-0">Try another title or genre.</p>
+    </div>
+}
+else
+{
+    <div class="row">
+        @foreach (var movie in Model)
+        {
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card movie-card h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="badge bg-primary genre-badge">
+                                @movie.Genre
+                            </span>
+
+                            <span class="badge bg-warning text-dark rating-badge">
+                                ⭐ @movie.Rating
+                            </span>
+                        </div>
+
+                        <h4 class="card-title">@movie.Title</h4>
+
+                        <p class="text-muted mb-2">
+                            <strong>Year:</strong> @movie.Year
+                        </p>
+
+                        @if (!string.IsNullOrEmpty(movie.Description))
+                        {
+                            <p class="card-text text-muted">
+                                @movie.Description
+                            </p>
+                        }
+
+                        <a href="/Movies/Details/@movie.Id" class="btn btn-outline-primary w-100 mt-2">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

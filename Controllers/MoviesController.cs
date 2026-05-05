@@ -1,35 +1,104 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MovieHub.Models;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace MovieHub.Controllers
 {
     public class MoviesController : Controller
     {
-        private List<Movie> movies = new List<Movie>
-        {
-            new Movie { Id = 1, Title = "Inception", Genre = "Sci-Fi", Year = 2010, Rating = 8.8 },
-            new Movie { Id = 2, Title = "Titanic", Genre = "Romance", Year = 1997, Rating = 7.8 },
-            new Movie { Id = 3, Title = "Interstellar", Genre = "Sci-Fi", Year = 2014, Rating = 8.6 },
-            new Movie { Id = 4, Title = "The Dark Knight", Genre = "Action", Year = 2008, Rating = 9.0 }
-        };
+        private readonly AppDbContext _context;
 
-        public IActionResult Index()
+        public MoviesController(AppDbContext context)
         {
-            return View(movies);
+            _context = context;
         }
 
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Index(string searchString, string genre, double? minRating)
         {
-            var movie = movies.FirstOrDefault(m => m.Id == id);
+            var movies = _context.Movies.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                movies = movies.Where(m => m.Title.Contains(searchString));
+            }
+
+            if (!string.IsNullOrEmpty(genre))
+            {
+                movies = movies.Where(m => m.Genre == genre);
+            }
+
+            if (minRating.HasValue)
+            {
+                movies = movies.Where(m => m.Rating >= minRating.Value);
+            }
+
+            ViewBag.Genres = await _context.Movies
+                .Select(m => m.Genre)
+                .Distinct()
+                .ToListAsync();
+
+            return View(await movies.ToListAsync());
+        }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var movie = await _context.Movies
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (movie == null)
+            {
+                return NotFound();
+            }
+
             return View(movie);
         }
 
-        public IActionResult Recommend(string genre)
+        public async Task<IActionResult> Recommend(string genre, double? minRating)
         {
-            var recommended = movies.Where(m => m.Genre == genre).ToList();
-            return View(recommended);
+            var movies = _context.Movies.AsQueryable();
+
+            if (!string.IsNullOrEmpty(genre))
+            {
+                movies = movies.Where(m => m.Genre == genre);
+            }
+
+            if (minRating.HasValue)
+            {
+                movies = movies.Where(m => m.Rating >= minRating.Value);
+            }
+
+            var recommendedMovies = await movies
+                .OrderByDescending(m => m.Rating)
+                .ThenByDescending(m => m.Year)
+                .Take(10)
+                .ToListAsync();
+
+            ViewBag.Genres = await _context.Movies
+                .Select(m => m.Genre)
+                .Distinct()
+                .ToListAsync();
+
+            return View(recommendedMovies);
+        }
+
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Movie movie)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Movies.Add(movie);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(movie);
         }
     }
 }

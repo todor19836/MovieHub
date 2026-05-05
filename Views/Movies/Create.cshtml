@@ -1,0 +1,59 @@
+﻿@model MovieHub.Models.Movie
+
+@{
+    ViewData["Title"] = "Add Movie";
+}
+
+<h1 class="section-title">Add New Movie</h1>
+
+<div class="card form-card p-4">
+    <form action="/Movies/Create" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label">Title</label>
+            <input asp-for="Title" class="form-control" placeholder="Enter movie title" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Genre" class="form-label">Genre</label>
+            <input asp-for="Genre" class="form-control" placeholder="Action, Drama, Sci-Fi..." />
+            <span asp-validation-for="Genre" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Year" class="form-label">Year</label>
+            <input asp-for="Year" class="form-control" type="number" />
+            <span asp-validation-for="Year" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Rating" class="form-label">Rating</label>
+            <input asp-for="Rating" class="form-control" type="number" step="0.1" min="0" max="10" />
+            <span asp-validation-for="Rating" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label">Description</label>
+            <textarea asp-for="Description" class="form-control" rows="4" placeholder="Write short description..."></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-success px-4">
+                Add Movie
+            </button>
+
+            <a href="/Movies" class="btn btn-outline-secondary px-4">
+                Back
+            </a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

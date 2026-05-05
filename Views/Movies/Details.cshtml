@@ -1,9 +1,42 @@
 ﻿@model MovieHub.Models.Movie
 
-<h2>@Model.Title</h2>
+@{
+    ViewData["Title"] = "Movie Details";
+}
 
-<p>Genre: @Model.Genre</p>
-<p>Year: @Model.Year</p>
-<p>Rating: @Model.Rating</p>
+<div class="card details-card p-4">
+    <span class="badge bg-primary genre-badge mb-3">
+        @Model.Genre
+    </span>
 
-<a href="/Movies">Back</a>
+    <h1 class="mb-3">@Model.Title</h1>
+
+    <p>
+        <strong>Year:</strong> @Model.Year
+    </p>
+
+    <p>
+        <strong>Rating:</strong> ⭐ @Model.Rating
+    </p>
+
+    @if (!string.IsNullOrEmpty(Model.Description))
+    {
+        <p>
+            <strong>Description:</strong>
+        </p>
+
+        <p class="text-muted">
+            @Model.Description
+        </p>
+    }
+
+    <div class="mt-4">
+        <a href="/Movies" class="btn btn-outline-secondary me-2">
+            Back to Movies
+        </a>
+
+        <a href="/Movies/Recommend" class="btn btn-primary">
+            Recommendations
+        </a>
+    </div>
+</div>

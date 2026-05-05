@@ -1,8 +1,57 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="hero-section text-center">
+    <h1 class="display-4 mb-3">Welcome to MovieHub</h1>
+
+    <p class="mb-4">
+        Find the best movie recommendations by genre and rating.
+        Discover your next favorite film in seconds.
+    </p>
+
+    <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <a href="/Movies/Recommend" class="btn btn-light btn-lg px-4">
+            Get Recommendations
+        </a>
+
+        <a href="/Movies" class="btn btn-outline-light btn-lg px-4">
+            View All Movies
+        </a>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-4 mb-4">
+        <div class="card feature-card h-100">
+            <div class="card-body text-center">
+                <h3>🎯 Recommendations</h3>
+                <p class="text-muted">
+                    Choose a genre and minimum rating to get movie suggestions.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card feature-card h-100">
+            <div class="card-body text-center">
+                <h3>🔍 Search</h3>
+                <p class="text-muted">
+                    Search movies by title and filter them by genre.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card feature-card h-100">
+            <div class="card-body text-center">
+                <h3>➕ Add Movies</h3>
+                <p class="text-muted">
+                    Add new movies to your movie recommendation website.
+                </p>
+            </div>
+        </div>
+    </div>
 </div>
