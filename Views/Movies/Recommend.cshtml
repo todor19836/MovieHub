@@ -1,0 +1,13 @@
+﻿@model List<MovieHub.Models.Movie>
+
+<h2>Recommended Movies</h2>
+
+@foreach (var movie in Model)
+{
+    <div>
+        <h3>@movie.Title</h3>
+        <p>@movie.Genre</p>
+    </div>
+}
+
+<a href="/Movies">Back</a>
