@@ -1,0 +1,75 @@
+﻿@model IEnumerable<MovieHub.Controllers.UserRoleViewModel>
+@{
+    ViewData["Title"] = "Admin – Users";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>👥 Manage Users</h2>
+    <a href="/Admin" class="btn btn-outline-secondary btn-sm">← Dashboard</a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>Email</th>
+                    <th>Roles</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td>@user.Email</td>
+                        <td>
+                            @if (user.Roles.Any())
+                            {
+                                foreach (var role in user.Roles)
+                                {
+                                    <span class="badge bg-danger me-1">@role</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-muted small">User</span>
+                            }
+                        </td>
+                        <td class="text-end">
+                            <form method="post" action="/Admin/ToggleAdmin" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="userId" value="@user.UserId" />
+                                <button type="submit"
+                                        class="btn btn-sm @(user.Roles.Contains("Admin") ? "btn-outline-warning" : "btn-outline-success")">
+                                    @(user.Roles.Contains("Admin") ? "Remove Admin" : "Make Admin")
+                                </button>
+                            </form>
+                            <form method="post" action="/Admin/DeleteUser" class="d-inline"
+                                  onsubmit="return confirm('Delete user @user.Email?')">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="userId" value="@user.UserId" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

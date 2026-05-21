@@ -1,10 +1,13 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - MovieHub</title>
-
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
@@ -13,38 +16,31 @@
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="/">🎬 MovieHub</a>
-
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-
                 <div class="collapse navbar-collapse" id="navbarMain">
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/">Home</a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Movies">Movies</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Movies/Recommend">Recommendations</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Movies/Create">Add Movie</a></li>
 
-                        <li class="nav-item">
-                            <a class="nav-link" href="/Movies">Movies</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="/Movies/Recommend">Recommendations</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="/Movies/Create">Add Movie</a>
-                        </li>
+                        @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-warning fw-semibold" href="/Admin">⚙️ Admin</a>
+                            </li>
+                        }
                     </ul>
+                    <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>
     </header>
 
     <div class="container py-4">
-        <main role="main">
-            @RenderBody()
-        </main>
+        <main role="main">@RenderBody()</main>
     </div>
 
     <footer class="border-top footer text-muted mt-4">
@@ -54,7 +50,6 @@
     </footer>
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

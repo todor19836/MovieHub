@@ -128,3 +128,17 @@ a {
     text-align: center;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
 }
+
+.navbar .nav-link {
+    color: white !important;
+    font-weight: 600;
+}
+
+    .navbar .nav-link:hover {
+        color: #ffd54f !important;
+    }
+
+.navbar-brand {
+    color: white !important;
+}
+

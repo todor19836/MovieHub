@@ -7,7 +7,7 @@ namespace MovieHub
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +21,7 @@ namespace MovieHub
                 options.UseSqlServer(connectionString));
 
             builder.Services.AddDefaultIdentity<IdentityUser>()
+                .AddRoles<IdentityRole>()                  
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             builder.Services.AddControllersWithViews();
@@ -28,9 +29,7 @@ namespace MovieHub
             var app = builder.Build();
 
             if (app.Environment.IsDevelopment())
-            {
                 app.UseMigrationsEndPoint();
-            }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
@@ -40,7 +39,7 @@ namespace MovieHub
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
@@ -51,11 +50,36 @@ namespace MovieHub
 
             using (var scope = app.Services.CreateScope())
             {
-                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+                var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
 
+                if (!await roleManager.RoleExistsAsync("Admin"))
+                    await roleManager.CreateAsync(new IdentityRole("Admin"));
+
+                var adminEmail = configuration["AdminSeed:Email"] ?? "admin@moviehub.com";
+                var adminPassword = configuration["AdminSeed:Password"] ?? "Admin@123456";
+
+                var adminUser = await userManager.FindByEmailAsync(adminEmail);
+                if (adminUser == null)
+                {
+                    adminUser = new IdentityUser
+                    {
+                        UserName = adminEmail,
+                        Email = adminEmail,
+                        EmailConfirmed = true
+                    };
+                    var result = await userManager.CreateAsync(adminUser, adminPassword);
+                    if (result.Succeeded)
+                        await userManager.AddToRoleAsync(adminUser, "Admin");
+                }
+                else if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
+                {
+                    await userManager.AddToRoleAsync(adminUser, "Admin");
+                }
             }
-            app.Run();
 
+            await app.RunAsync();
         }
     }
 }

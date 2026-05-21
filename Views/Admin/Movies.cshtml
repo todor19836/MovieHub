@@ -1,0 +1,55 @@
+﻿@model IEnumerable<MovieHub.Models.Movie>
+@{
+    ViewData["Title"] = "Admin – Movies";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>🎬 Manage Movies</h2>
+    <a href="/Admin" class="btn btn-outline-secondary btn-sm">← Dashboard</a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Genre</th>
+                    <th>Year</th>
+                    <th>Rating</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var movie in Model)
+                {
+                    <tr>
+                        <td class="text-muted small">@movie.Id</td>
+                        <td><strong>@movie.Title</strong></td>
+                        <td><span class="badge bg-primary">@movie.Genre</span></td>
+                        <td>@movie.Year</td>
+                        <td><span class="badge bg-warning text-dark">⭐ @movie.Rating</span></td>
+                        <td class="text-end">
+                            <a href="/Admin/EditMovie/@movie.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                            <form method="post" action="/Admin/DeleteMovie" class="d-inline"
+                                  onsubmit="return confirm('Delete this movie?')">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@movie.Id" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

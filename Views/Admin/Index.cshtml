@@ -1,0 +1,87 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>⚙️ Admin Dashboard</h2>
+    <span class="badge bg-danger fs-6">Admin Panel</span>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="row g-4 mb-5">
+    <div class="col-sm-6 col-lg-3">
+        <div class="card text-white bg-primary h-100 shadow-sm">
+            <div class="card-body text-center py-4">
+                <div style="font-size:2.5rem">🎬</div>
+                <h2 class="fw-bold">@ViewBag.MovieCount</h2>
+                <p class="mb-0">Total Movies</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card text-white bg-success h-100 shadow-sm">
+            <div class="card-body text-center py-4">
+                <div style="font-size:2.5rem">👥</div>
+                <h2 class="fw-bold">@ViewBag.UserCount</h2>
+                <p class="mb-0">Registered Users</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card text-white bg-warning h-100 shadow-sm">
+            <div class="card-body text-center py-4">
+                <div style="font-size:2.5rem">🎭</div>
+                <h2 class="fw-bold">@ViewBag.GenreCount</h2>
+                <p class="mb-0">Genres</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card text-dark bg-light h-100 shadow-sm">
+            <div class="card-body text-center py-4">
+                <div style="font-size:2.5rem">⭐</div>
+                <h6 class="fw-bold">Top Rated</h6>
+                @if (ViewBag.TopMovie != null)
+                {
+                    <p class="mb-0 small">@ViewBag.TopMovie.Title</p>
+                    <span class="badge bg-warning text-dark">@ViewBag.TopMovie.Rating / 10</span>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-dark text-white fw-semibold">🎬 Manage Movies</div>
+            <div class="card-body">
+                <p class="text-muted">View, edit, or delete any movie in the database.</p>
+                <a href="/Admin/Movies" class="btn btn-primary">Go to Movies</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-dark text-white fw-semibold">👥 Manage Users</div>
+            <div class="card-body">
+                <p class="text-muted">View users, promote to Admin, or remove accounts.</p>
+                <a href="/Admin/Users" class="btn btn-success">Go to Users</a>
+            </div>
+        </div>
+    </div>
+</div>
